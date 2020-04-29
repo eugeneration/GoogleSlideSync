@@ -7,14 +7,6 @@ function isGoogleSlidesPresentation() {
     && getPresentationButton();
 }
 
-if (!isGoogleSlidesPresentation()) {
-  var iframe = window.document.createElement('iframe');
-  iframe.src = 'http://en.wikipedia.org/';
-  document.body.appendChild(iframe);
-  throw new Error("SlideSync only works on presentations!");
-}
-
-
 var slideTitlePrefix = '▹';
 var slideTitleRegex = /▹(\d+)$/;
 
@@ -415,6 +407,8 @@ function ensureCss(context) {
     #slide-sync-message {
       margin-left: 12px;
       margin-right: 6px;
+      margin-top: 0;
+      margin-bottom: 0;
       cursor: default;
       user-select: none;
     }
@@ -425,29 +419,30 @@ function createTooltip(el, message) {
   el.setAttribute('data-tooltip', message);
 }
 
-function setUIStateNone() {
+function setButtonsVisible(stopPresent, stopView, present, view) {
   var slideBase = getUI() || getUIInPresentation();
+  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = stopPresent ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = stopView ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-present').style.display = present ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-view').style.display = view ? 'block' : 'none';
+}
+
+function setUIStateNone() {
   setStatus();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'block';
+  setButtonsVisible(false, false, true, true);
 }
 
 function setUIStateViewing() {
-  var slideBase = getUI() || getUIInPresentation();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'none';
+  setButtonsVisible(false, true, false, false);
 }
 
 function setUIStatePresenting() {
-  var slideBase = getUI() || getUIInPresentation();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'none';
+  setButtonsVisible(true, false, false, false);
+}
+
+function setUIStateNotAPresentation() {
+  setStatus("Only works on Google Slides");
+  setButtonsVisible(false, false, false, false);
 }
 
 function addClass(el, className) {
@@ -548,7 +543,8 @@ function createUI() {
   });
 
   setStatus();
-  if (isViewing()) setUIStateViewing();
+  if (!isGoogleSlidesPresentation()) setUIStateNotAPresentation();
+  else if (isViewing()) setUIStateViewing();
   else if (isPresenting()) setUIStatePresenting();
   else setUIStateNone();
 }

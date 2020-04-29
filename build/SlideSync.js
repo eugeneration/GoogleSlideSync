@@ -5,13 +5,6 @@ function isGoogleSlidesPresentation() {
   return window.location.host === "docs.google.com" && window.location.pathname.startsWith("/presentation") && getPresentationButton();
 }
 
-if (!isGoogleSlidesPresentation()) {
-  var iframe = window.document.createElement('iframe');
-  iframe.src = 'http://en.wikipedia.org/';
-  document.body.appendChild(iframe);
-  throw new Error("SlideSync only works on presentations!");
-}
-
 var slideTitlePrefix = '▹';
 var slideTitleRegex = /▹(\d+)$/;
 
@@ -332,36 +325,37 @@ function addScopedStyle(parent, styleString) {
 }
 
 function ensureCss(context) {
-  addScopedStyle(context, "\n    #slide-sync-container {\n      position:fixed;\n      top: 0;\n      left: 0;\n      right: 0;\n      display:flex;\n      justify-content:center;\n      pointer-events: none;\n      z-index: 999;\n    }\n\n\n    @keyframes fadeInFromNone {\n        10% {\n            transform: translateY(0px);\n            opacity: 1;\n        }\n\n        50% {\n            transform: translateY(0px);\n            opacity: 1;\n        }\n    }\n\n    #slide-sync-bar-anim {\n      pointer-events: all;\n\n      transition: opacity 1s 0.5s, transform 1s 0.5s;\n      animation: fadeInFromNone 3s ease-out;\n    }\n    #slide-sync-bar-anim:not(.paused) {\n      opacity: 0.1;\n      transform: translateY(-20px);\n    }\n    #slide-sync-bar-anim:hover {\n      opacity: 1;\n      transform: translateY(0px);\n      transition: opacity 0.1s, transform 0.1s;\n      animation: fadeInFromNone 0s;\n    }\n\n\n    #slide-sync-bar {\n      background-color: white;\n      padding: 6px 8px;\n      border: 1px solid rgba(0, 0, 0, 0.1);\n      border-radius: 0 0 10px 10px;\n      margin-top: -1px;\n      display: flex;\n      flex-direction: row;\n      align-items: center;\n      box-shadow: rgba(0,0,0,0.5) 0px 1px 12px -1px;\n\n      transition: opacity 1s 0.5s, transform 1s 0.5s;\n      animation: fadeInFromNone 3s ease-out;\n    }\n    #slide-sync-bar:not(.paused) {\n      opacity: 0.1;\n      transform: translateY(-25px);\n    }\n    #slide-sync-bar-anim:hover #slide-sync-bar {\n      opacity: 1;\n      transform: translateY(0px);\n      transition: opacity 0.1s, transform 0.1s;\n      animation: fadeInFromNone 0s;\n    }\n\n    #slide-sync-logo {\n      margin: 0;\n      margin-left: 6px;\n      font-size: 1.2em;\n      font-family: \"Google Sans\",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;\n      cursor: default;\n      user-select: none;\n    }\n    .slide-sync-button {\n      margin-left: 8px;\n      border: 1px solid rgba(0, 0, 0, 0.1);\n      border-radius: 4px;\n      outline:0;\n      cursor: pointer;\n    }\n    .slide-sync-button.disabled {\n      points-events: none;\n      opacity: .4;\n      cursor: default;\n    }\n    .slide-sync-button.primary {\n      background-color: #fbbc04;\n      border: 0;\n    }\n    .slide-sync-button p {\n      margin: 8px;\n      user-select: none;\n      font-weight:500;\n      font-family: \"Google Sans\",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;\n    }\n    .slide-sync-button.primary:hover {\n      background-color: #fbc117;\n      border: 0;\n    }\n    .slide-sync-button.primary:active {\n      background-color: #fcd154;\n      border: 0;\n    }\n    .slide-sync-button:hover {\n      background-color: #fffdf6;\n      border: 1px solid #feedbc;\n    }\n    .slide-sync-button:active {\n      background-color: #fff7e1;\n      border: 1px solid #fee8ac;\n    }\n    #slide-sync-message {\n      margin-left: 12px;\n      margin-right: 6px;\n      cursor: default;\n      user-select: none;\n    }\n  ");
+  addScopedStyle(context, "\n    #slide-sync-container {\n      position:fixed;\n      top: 0;\n      left: 0;\n      right: 0;\n      display:flex;\n      justify-content:center;\n      pointer-events: none;\n      z-index: 999;\n    }\n\n\n    @keyframes fadeInFromNone {\n        10% {\n            transform: translateY(0px);\n            opacity: 1;\n        }\n\n        50% {\n            transform: translateY(0px);\n            opacity: 1;\n        }\n    }\n\n    #slide-sync-bar-anim {\n      pointer-events: all;\n\n      transition: opacity 1s 0.5s, transform 1s 0.5s;\n      animation: fadeInFromNone 3s ease-out;\n    }\n    #slide-sync-bar-anim:not(.paused) {\n      opacity: 0.1;\n      transform: translateY(-20px);\n    }\n    #slide-sync-bar-anim:hover {\n      opacity: 1;\n      transform: translateY(0px);\n      transition: opacity 0.1s, transform 0.1s;\n      animation: fadeInFromNone 0s;\n    }\n\n\n    #slide-sync-bar {\n      background-color: white;\n      padding: 6px 8px;\n      border: 1px solid rgba(0, 0, 0, 0.1);\n      border-radius: 0 0 10px 10px;\n      margin-top: -1px;\n      display: flex;\n      flex-direction: row;\n      align-items: center;\n      box-shadow: rgba(0,0,0,0.5) 0px 1px 12px -1px;\n\n      transition: opacity 1s 0.5s, transform 1s 0.5s;\n      animation: fadeInFromNone 3s ease-out;\n    }\n    #slide-sync-bar:not(.paused) {\n      opacity: 0.1;\n      transform: translateY(-25px);\n    }\n    #slide-sync-bar-anim:hover #slide-sync-bar {\n      opacity: 1;\n      transform: translateY(0px);\n      transition: opacity 0.1s, transform 0.1s;\n      animation: fadeInFromNone 0s;\n    }\n\n    #slide-sync-logo {\n      margin: 0;\n      margin-left: 6px;\n      font-size: 1.2em;\n      font-family: \"Google Sans\",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;\n      cursor: default;\n      user-select: none;\n    }\n    .slide-sync-button {\n      margin-left: 8px;\n      border: 1px solid rgba(0, 0, 0, 0.1);\n      border-radius: 4px;\n      outline:0;\n      cursor: pointer;\n    }\n    .slide-sync-button.disabled {\n      points-events: none;\n      opacity: .4;\n      cursor: default;\n    }\n    .slide-sync-button.primary {\n      background-color: #fbbc04;\n      border: 0;\n    }\n    .slide-sync-button p {\n      margin: 8px;\n      user-select: none;\n      font-weight:500;\n      font-family: \"Google Sans\",Roboto,RobotoDraft,Helvetica,Arial,sans-serif;\n    }\n    .slide-sync-button.primary:hover {\n      background-color: #fbc117;\n      border: 0;\n    }\n    .slide-sync-button.primary:active {\n      background-color: #fcd154;\n      border: 0;\n    }\n    .slide-sync-button:hover {\n      background-color: #fffdf6;\n      border: 1px solid #feedbc;\n    }\n    .slide-sync-button:active {\n      background-color: #fff7e1;\n      border: 1px solid #fee8ac;\n    }\n    #slide-sync-message {\n      margin-left: 12px;\n      margin-right: 6px;\n      margin-top: 0;\n      margin-bottom: 0;\n      cursor: default;\n      user-select: none;\n    }\n  ");
 }
 
 function createTooltip(el, message) {
   el.setAttribute('data-tooltip', message);
 }
 
-function setUIStateNone() {
+function setButtonsVisible(stopPresent, stopView, present, view) {
   var slideBase = getUI() || getUIInPresentation();
+  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = stopPresent ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = stopView ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-present').style.display = present ? 'block' : 'none';
+  slideBase.querySelector('#slide-sync-button-view').style.display = view ? 'block' : 'none';
+}
+
+function setUIStateNone() {
   setStatus();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'block';
+  setButtonsVisible(false, false, true, true);
 }
 
 function setUIStateViewing() {
-  var slideBase = getUI() || getUIInPresentation();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'none';
+  setButtonsVisible(false, true, false, false);
 }
 
 function setUIStatePresenting() {
-  var slideBase = getUI() || getUIInPresentation();
-  slideBase.querySelector('#slide-sync-button-stopPresenting').style.display = 'block';
-  slideBase.querySelector('#slide-sync-button-stopViewing').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-present').style.display = 'none';
-  slideBase.querySelector('#slide-sync-button-view').style.display = 'none';
+  setButtonsVisible(true, false, false, false);
+}
+
+function setUIStateNotAPresentation() {
+  setStatus("Only works on Google Slides");
+  setButtonsVisible(false, false, false, false);
 }
 
 function addClass(el, className) {
@@ -449,7 +443,7 @@ function createUI() {
     setUIStateNone();
   });
   setStatus();
-  if (isViewing()) setUIStateViewing();else if (isPresenting()) setUIStatePresenting();else setUIStateNone();
+  if (!isGoogleSlidesPresentation()) setUIStateNotAPresentation();else if (isViewing()) setUIStateViewing();else if (isPresenting()) setUIStatePresenting();else setUIStateNone();
 }
 
 removeExistingUI(); // check if presentation mode
